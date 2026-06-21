@@ -1,0 +1,197 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&family=Syne:wght@700;800&display=swap');
+
+:root {
+  --bg-color: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --text-primary: #111111;
+  --text-secondary: #666666;
+  --accent-color: #000000;
+  --accent-red: #ff3b30; /* Lutoni color */
+  --accent-grey: #e5e5e5;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --glass-shadow: rgba(0, 0, 0, 0.04) 0px 8px 32px 0px;
+  
+  --font-header: 'Outfit', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-edgy: 'Syne', sans-serif;
+  
+  --cursor-color: #111111;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  font-family: var(--font-body);
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Subtle Zebra Pattern Watermark */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-image: url('/assets/artbyoture_logo.png');
+  background-repeat: repeat;
+  background-size: 320px;
+  opacity: 0.04;
+  pointer-events: none;
+  z-index: -1;
+  filter: contrast(1.2);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+  transition: opacity 0.3s ease;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+}
+
+/* Glassmorphism Classes */
+.glass-panel {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  border-radius: 12px;
+}
+
+.glass-header {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--glass-border);
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #bbb;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+/* Custom Cursor Styles */
+.custom-cursor {
+  width: 8px;
+  height: 8px;
+  background-color: var(--text-primary);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9999;
+  transition: width 0.2s, height 0.2s, background-color 0.2s;
+}
+
+.custom-cursor-follower {
+  width: 40px;
+  height: 40px;
+  border: 1.5px solid var(--text-primary);
+  border-radius: 50%;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 9998;
+  transition: transform 0.08s ease-out, width 0.3s, height 0.3s, background-color 0.3s, border-color 0.3s;
+}
+
+/* Cursor States */
+.custom-cursor-follower.hovering {
+  width: 60px;
+  height: 60px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-color: var(--text-primary);
+}
+
+.custom-cursor-follower.video-hover {
+  width: 90px;
+  height: 90px;
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.custom-cursor-follower.video-hover::after {
+  content: "PLAY";
+  color: #fff;
+  font-family: var(--font-header);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.custom-cursor-follower.drag-hover {
+  width: 80px;
+  height: 80px;
+  background-color: var(--text-primary);
+  border-color: var(--text-primary);
+}
+
+.custom-cursor-follower.drag-hover::after {
+  content: "DRAG";
+  color: #fff;
+  font-family: var(--font-header);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+/* Hide Default Cursor on devices that support hover */
+@media (hover: hover) and (pointer: fine) {
+  body, a, button, [role="button"] {
+    cursor: none;
+  }
+}
+
+/* Utilities */
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 20px;
+  }
+  .custom-cursor, .custom-cursor-follower {
+    display: none !important;
+  }
+  body, a, button, [role="button"] {
+    cursor: auto !important;
+  }
+}

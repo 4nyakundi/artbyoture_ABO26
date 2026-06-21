@@ -1,0 +1,217 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+  z-index: 1000;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.navbar-logo-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  height: 100%;
+}
+
+.navbar-logo {
+  height: 48px;
+  width: auto;
+  object-fit: contain;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.navbar-logo:hover {
+  transform: scale(1.05) rotate(-2deg);
+}
+
+.navbar-brand-name {
+  font-family: var(--font-header);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.navbar-menu {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  list-style: none;
+  height: 100%;
+}
+
+.navbar-item {
+  position: relative;
+  font-family: var(--font-header);
+  font-weight: 600;
+  font-size: 0.95rem;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.navbar-link {
+  color: var(--text-primary);
+  opacity: 0.7;
+  padding: 8px 4px;
+  position: relative;
+}
+
+.navbar-link:hover,
+.navbar-link.active {
+  opacity: 1;
+}
+
+.navbar-link::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.navbar-link:hover::after,
+.navbar-link.active::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* Theme shifts for Lutoni page */
+.lutoni-nav .navbar-link::after {
+  background-color: var(--accent-red);
+}
+
+/* Cart Toggle Button */
+.cart-toggle-btn {
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--glass-border);
+  background: rgba(0, 0, 0, 0.03);
+  font-family: var(--font-header);
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+  transition: all 0.3s;
+}
+
+.cart-toggle-btn:hover {
+  background: var(--text-primary);
+  color: #fff;
+  border-color: var(--text-primary);
+}
+
+.lutoni-nav .cart-toggle-btn:hover {
+  background: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+.cart-count {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--text-primary);
+  color: #fff;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  font-size: 0.75rem;
+  font-weight: 700;
+  transition: background-color 0.3s;
+}
+
+.cart-toggle-btn:hover .cart-count {
+  background: #fff;
+  color: var(--text-primary);
+}
+
+.lutoni-nav .cart-count {
+  background: var(--accent-red);
+}
+
+.lutoni-nav .cart-toggle-btn:hover .cart-count {
+  color: var(--accent-red);
+}
+
+/* Mobile Burger Menu Button */
+.burger-menu-btn {
+  display: none;
+  background: none;
+  border: none;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 24px;
+  height: 18px;
+  z-index: 1001;
+}
+
+.burger-line {
+  width: 100%;
+  height: 2px;
+  background-color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+/* Mobile layout adjustments */
+@media (max-width: 992px) {
+  .navbar {
+    padding: 0 20px;
+  }
+  
+  .burger-menu-btn {
+    display: flex;
+  }
+
+  .navbar-menu {
+    position: fixed;
+    top: 0;
+    right: -100%;
+    width: 300px;
+    height: 100vh;
+    background: var(--bg-color);
+    box-shadow: -10px 0 30px rgba(0,0,0,0.05);
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 80px 40px;
+    gap: 25px;
+    transition: right 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  }
+
+  .navbar-menu.open {
+    right: 0;
+  }
+
+  .navbar-item {
+    height: auto;
+    width: 100%;
+  }
+
+  .navbar-link {
+    font-size: 1.5rem;
+    padding: 10px 0;
+    width: 100%;
+    display: block;
+  }
+
+  .navbar-link::after {
+    display: none;
+  }
+}
