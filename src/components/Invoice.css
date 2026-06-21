@@ -276,3 +276,33 @@
     width: 100%;
   }
 }
+
+/* Footer Section Styling */
+.invoice-footer-section {
+  margin-top: 60px;
+  border-top: 1px solid rgba(0,0,0,0.08);
+  padding-top: 25px;
+  text-align: center;
+}
+
+.invoice-footer-line {
+  font-family: var(--font-header);
+  font-weight: 800;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+  color: #111;
+}
+
+.invoice-footer-sub {
+  font-size: 0.78rem;
+  color: #666;
+  margin-bottom: 10px;
+}
+
+.invoice-footer-disclaimer {
+  font-size: 0.68rem;
+  color: #999;
+  font-style: italic;
+}

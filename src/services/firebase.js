@@ -1,5 +1,6 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore, collection, doc, getDocs, getDoc, addDoc, updateDoc, setDoc, query, orderBy, deleteDoc } from 'firebase/firestore';
+import { getStorage, ref, uploadBytes, getDownloadURL, deleteObject } from 'firebase/storage';
 
 // Default mock products
 const initialMockProducts = [
@@ -212,7 +213,18 @@ const initialMockOrders = [
 // Firebase Setup Helper
 let app = null;
 let db = null;
+let storage = null;
 let isMockMode = true;
+
+const defaultFirebaseConfig = {
+  apiKey: "AIzaSyC0843y55nxo4EQ8f7WLUk7_eeQ2M2jx7o",
+  authDomain: "artbyoture.firebaseapp.com",
+  projectId: "artbyoture",
+  storageBucket: "artbyoture.firebasestorage.app",
+  messagingSenderId: "630164849235",
+  appId: "1:630164849235:web:58e12994ff687545493ca6",
+  measurementId: "G-CRMSH027JW"
+};
 
 const loadFirebaseConfig = () => {
   const saved = localStorage.getItem('firebase_config');
@@ -235,7 +247,7 @@ const loadFirebaseConfig = () => {
       appId: import.meta.env.VITE_FIREBASE_APP_ID
     };
   }
-  return null;
+  return defaultFirebaseConfig;
 };
 
 const config = loadFirebaseConfig();
@@ -244,6 +256,7 @@ if (config && config.apiKey && config.apiKey !== 'YOUR_API_KEY') {
   try {
     app = getApps().length === 0 ? initializeApp(config) : getApp();
     db = getFirestore(app);
+    storage = getStorage(app);
     isMockMode = false;
     console.log("Firebase initialized successfully. Running in CLOUD mode.");
   } catch (error) {
@@ -274,14 +287,7 @@ export const database = {
   isMock: () => isMockMode,
   
   getFirebaseConfig: () => {
-    return loadFirebaseConfig() || {
-      apiKey: '',
-      authDomain: '',
-      projectId: 'artbyoture',
-      storageBucket: 'artbyoture.appspot.com',
-      messagingSenderId: '',
-      appId: ''
-    };
+    return loadFirebaseConfig() || defaultFirebaseConfig;
   },
   
   saveFirebaseConfig: (newConfig) => {
@@ -415,6 +421,132 @@ export const database = {
       await updateDoc(docRef, { status });
       const updatedSnap = await getDoc(docRef);
       return { id: updatedSnap.id, ...updatedSnap.data() };
+    }
+  },
+
+  // Invoices CRUD
+  getInvoices: async () => {
+    if (isMockMode) {
+      return getLocalData('mock_invoices', []);
+    } else {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'invoices'));
+        const invoicesList = [];
+        querySnapshot.forEach((doc) => {
+          invoicesList.push({ id: doc.id, ...doc.data() });
+        });
+        return invoicesList.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      } catch (e) {
+        console.error("Firestore read error, falling back to local mock invoices:", e);
+        return getLocalData('mock_invoices', []);
+      }
+    }
+  },
+
+  addInvoice: async (invoice) => {
+    const id = invoice.id || 'INV-' + Math.floor(100000 + Math.random() * 900000) + '-' + (invoice.brand === 'lutoni' ? 'LUT' : invoice.brand === 'oture' ? 'ABO' : 'ALL');
+    const newInvoice = { ...invoice, id, createdAt: invoice.createdAt || new Date().toISOString() };
+    
+    if (isMockMode) {
+      const invoices = getLocalData('mock_invoices', []);
+      invoices.unshift(newInvoice);
+      setLocalData('mock_invoices', invoices);
+      return newInvoice;
+    } else {
+      await setDoc(doc(db, 'invoices', id), newInvoice);
+      return newInvoice;
+    }
+  },
+
+  deleteInvoice: async (id) => {
+    if (isMockMode) {
+      const invoices = getLocalData('mock_invoices', []);
+      const filtered = invoices.filter(inv => inv.id !== id);
+      setLocalData('mock_invoices', filtered);
+      return true;
+    } else {
+      await deleteDoc(doc(db, 'invoices', id));
+      return true;
+    }
+  },
+
+  // Media Items CRUD
+  getMediaItems: async () => {
+    if (isMockMode) {
+      return getLocalData('mock_media_items', [
+        { id: 'm-1', name: 'Zebra Lines Painting', url: '/assets/IMG_1333.jpg', type: 'image', size: '2.5 MB', createdAt: new Date().toISOString() },
+        { id: 'm-2', name: 'Process Video', url: '/videos/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4', type: 'video', size: '5.5 MB', createdAt: new Date().toISOString() }
+      ]);
+    } else {
+      try {
+        const querySnapshot = await getDocs(collection(db, 'media_items'));
+        const mediaList = [];
+        querySnapshot.forEach((doc) => {
+          mediaList.push({ id: doc.id, ...doc.data() });
+        });
+        return mediaList.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+      } catch (e) {
+        console.error("Firestore read error for media:", e);
+        return getLocalData('mock_media_items', []);
+      }
+    }
+  },
+
+  addMediaItem: async (mediaItem) => {
+    const id = 'media-' + Math.random().toString(36).substr(2, 9);
+    const newMedia = { ...mediaItem, id, createdAt: new Date().toISOString() };
+    
+    if (isMockMode) {
+      const media = getLocalData('mock_media_items', []);
+      media.unshift(newMedia);
+      setLocalData('mock_media_items', media);
+      return newMedia;
+    } else {
+      await setDoc(doc(db, 'media_items', id), newMedia);
+      return newMedia;
+    }
+  },
+
+  deleteMediaItem: async (id, storagePath) => {
+    if (isMockMode) {
+      const media = getLocalData('mock_media_items', []);
+      const filtered = media.filter(m => m.id !== id);
+      setLocalData('mock_media_items', filtered);
+      return true;
+    } else {
+      await deleteDoc(doc(db, 'media_items', id));
+      if (storagePath) {
+        try {
+          const storageRef = ref(storage, storagePath);
+          await deleteObject(storageRef);
+        } catch (e) {
+          console.error("Could not delete from storage bucket:", e);
+        }
+      }
+      return true;
+    }
+  },
+
+  // Media File Uploading
+  uploadMediaFile: async (file, pathName) => {
+    if (isMockMode) {
+      return new Promise((resolve, reject) => {
+        if (file.size < 1.5 * 1024 * 1024) {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve(reader.result);
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        } else {
+          const isVideo = file.type.startsWith('video/');
+          resolve(isVideo ? `/videos/${file.name}` : `/assets/${file.name}`);
+        }
+      });
+    } else {
+      const storagePath = pathName || `media/${Date.now()}_${file.name}`;
+      const storageRef = ref(storage, storagePath);
+      await uploadBytes(storageRef, file);
+      const downloadUrl = await getDownloadURL(storageRef);
+      return { downloadUrl, storagePath };
     }
   }
 };

@@ -87,6 +87,11 @@ export default function Gallery({ onAddToCart }) {
                 className="gallery-card-img-wrap" 
                 onClick={() => setLightboxItem(art)}
               >
+                {art.status === 'sold' && (
+                  <div className="gallery-sold-ribbon">
+                    <span>Sold</span>
+                  </div>
+                )}
                 <img 
                   src={art.imageUrl} 
                   alt={art.name} 
@@ -112,12 +117,21 @@ export default function Gallery({ onAddToCart }) {
 
                 <div className="gallery-card-bottom">
                   <span className="gallery-card-price">{formatPrice(art.price)}</span>
-                  <button 
-                    className="gallery-buy-btn"
-                    onClick={() => onAddToCart(art)}
-                  >
-                    Buy Original
-                  </button>
+                  {art.status === 'sold' ? (
+                    <button 
+                      className="gallery-buy-btn sold"
+                      disabled
+                    >
+                      Sold Out
+                    </button>
+                  ) : (
+                    <button 
+                      className="gallery-buy-btn"
+                      onClick={() => onAddToCart(art)}
+                    >
+                      Buy Original
+                    </button>
+                  )}
                 </div>
               </div>
             </div>
@@ -142,7 +156,7 @@ export default function Gallery({ onAddToCart }) {
                 className="lightbox-img" 
               />
               <div className="lightbox-caption">
-                {lightboxItem.name} • {lightboxItem.year || '2026'} • {lightboxItem.medium} ({lightboxItem.dimensions})
+                {lightboxItem.name} {lightboxItem.status === 'sold' ? '(Sold)' : ''} • {lightboxItem.year || '2026'} • {lightboxItem.medium} ({lightboxItem.dimensions})
               </div>
             </div>
           </>

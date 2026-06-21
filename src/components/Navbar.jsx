@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { ShoppingBag, Menu, X } from 'lucide-react';
+import { ShoppingBag, Menu, X, Lock } from 'lucide-react';
 import './Navbar.css';
 
 export default function Navbar({ cartCount, onCartToggle }) {
@@ -64,19 +64,23 @@ export default function Navbar({ cartCount, onCartToggle }) {
               Videos
             </NavLink>
           </li>
-          <li className="navbar-item">
-            <NavLink to="/admin" className={({ isActive }) => `navbar-link ${isActive ? 'active' : ''}`}>
-              Dashboard
-            </NavLink>
-          </li>
+          {/* Dashboard link removed from navigation items list */}
         </ul>
       </nav>
 
-      <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
         <button className="cart-toggle-btn" onClick={onCartToggle}>
           <ShoppingBag size={18} />
           <span>Cart</span>
           <span className="cart-count">{cartCount}</span>
+        </button>
+
+        <button 
+          className="navbar-login-btn interactive" 
+          onClick={onLoginToggle} 
+          aria-label="Open Admin Login"
+        >
+          <Lock size={16} />
         </button>
 
         <button 

@@ -14,57 +14,57 @@ export default function Videos() {
     {
       label: 'The Process / Painting Wave Lines',
       word: 'WAVES',
-      src: '/assets/I_20haven_E2_80_99t_20had_20this_20much_20fun_20working_20on_20a_20piece_20in_20a_20while.._20can_E2_80_99t_20wait_20to_20share_20the_20final_20produc.mp4'
+      src: '/videos/I_20haven_E2_80_99t_20had_20this_20much_20fun_20working_20on_20a_20piece_20in_20a_20while.._20can_E2_80_99t_20wait_20to_20share_20the_20final_20produc.mp4'
     },
     {
       label: 'Acrylic Layering Progress',
       word: 'DETAIL',
-      src: '/assets/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4'
+      src: '/videos/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4'
     },
     {
       label: 'Fine Strokes & Texture Work',
       word: 'SHATTER',
-      src: '/assets/0873F2E2-D268-49B5-B1B9-126646E0D83D.MP4'
+      src: '/videos/0873F2E2-D268-49B5-B1B9-126646E0D83D.MP4'
     },
     {
       label: 'Fluid Acrylic Flow & Movement',
       word: 'FLOW',
-      src: '/assets/3878A53A-81AA-493F-942B-3D6244C95961.MP4'
+      src: '/videos/3878A53A-81AA-493F-942B-3D6244C95961.MP4'
     },
     {
       label: 'Brushing Canvas Layers',
       word: 'CANVAS',
-      src: '/assets/52C92DE6-F596-4C48-BAE8-E76FF80F0685.MP4'
+      src: '/videos/52C92DE6-F596-4C48-BAE8-E76FF80F0685.MP4'
     },
     {
       label: 'Abstract Shapes Composition',
       word: 'SHAPES',
-      src: '/assets/DDE13BA2-6844-413B-AFC1-C223020A17B6.MP4'
+      src: '/videos/DDE13BA2-6844-413B-AFC1-C223020A17B6.MP4'
     },
     {
       label: 'Dynamic Art Strokes',
       word: 'STROKES',
-      src: '/assets/E45356A6-F477-4FF4-AA1C-2E034C14EF62.MP4'
+      src: '/videos/E45356A6-F477-4FF4-AA1C-2E034C14EF62.MP4'
     },
     {
       label: 'Zebra Pattern Layering',
       word: 'ZEBRA',
-      src: '/assets/v09044g40000ckr0be7og65r0npr5p7g.MP4'
+      src: '/videos/v09044g40000ckr0be7og65r0npr5p7g.MP4'
     },
     {
       label: 'Lutoni Blossom Wear Print',
       word: 'BLOSSOM',
-      src: '/assets/v09044g40000cqesjjnog65o0ifiialg.MP4'
+      src: '/videos/v09044g40000cqesjjnog65o0ifiialg.MP4'
     },
     {
       label: 'Shadow Depth Contrast',
       word: 'SHADOW',
-      src: '/assets/v09044g40000cr7f7jfog65kb4ko49h0.MP4'
+      src: '/videos/v09044g40000cr7f7jfog65kb4ko49h0.MP4'
     },
     {
       label: 'Textured Surface Experiment',
       word: 'TEXTURE',
-      src: '/assets/v09044g40000ctebos7og65inlsgqq9g.MP4'
+      src: '/videos/v09044g40000ctebos7og65inlsgqq9g.MP4'
     }
   ];
 

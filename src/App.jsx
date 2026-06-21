@@ -10,6 +10,7 @@ import Navbar from './components/Navbar';
 import Cart from './components/Cart';
 import Checkout from './components/Checkout';
 import Cursor from './components/Cursor';
+import LoginDrawer from './components/LoginDrawer';
 
 // Pages
 import Home from './pages/Home';
@@ -24,6 +25,7 @@ export default function App() {
   const [cart, setCart] = useState([]);
   const [cartOpen, setCartOpen] = useState(false);
   const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [loginOpen, setLoginOpen] = useState(false);
 
   // 1. Initialize Lenis Smooth Scrolling
   useEffect(() => {
@@ -124,6 +126,7 @@ export default function App() {
       <Navbar 
         cartCount={cartCount} 
         onCartToggle={() => setCartOpen(!cartOpen)} 
+        onLoginToggle={() => setLoginOpen(!loginOpen)}
       />
 
       {/* Main Pages Router */}
@@ -154,6 +157,12 @@ export default function App() {
         cartItems={cart}
         onClearCart={handleClearCart}
         onSubmitOrder={handleSubmitOrder}
+      />
+
+      {/* Global Admin Login Drawer */}
+      <LoginDrawer 
+        isOpen={loginOpen}
+        onClose={() => setLoginOpen(false)}
       />
     </BrowserRouter>
   );

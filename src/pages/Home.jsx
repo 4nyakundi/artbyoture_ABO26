@@ -396,7 +396,7 @@ export default function Home() {
                 alt="Artist Calvin Oture Portrait" 
               />
               <video 
-                src="/assets/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4" 
+                src="/videos/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4" 
                 className="artist-profile-video" 
                 loop 
                 muted 

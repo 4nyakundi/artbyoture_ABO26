@@ -4,8 +4,6 @@ import './Invoice.css';
 
 export default function Invoice({ order, onClose }) {
   if (!order) return null;
-
-  const total = order.totalAmount;
   
   // Format price helper
   const formatPrice = (price) => {
@@ -29,9 +27,13 @@ export default function Invoice({ order, onClose }) {
     });
   };
 
-  // Determine logo branding based on items purchased
-  const hasArt = order.items.some(item => item.type === 'art');
-  const hasWearable = order.items.some(item => item.type === 'wearable');
+  const hasArt = order.brand === 'oture' || order.brand === 'both' || order.items.some(item => item.type === 'art');
+  const hasWearable = order.brand === 'lutoni' || order.brand === 'both' || order.items.some(item => item.type === 'wearable');
+
+  const subtotal = order.subtotal !== undefined ? order.subtotal : order.items.reduce((sum, i) => sum + (i.price * i.quantity), 0);
+  const tax = order.tax || 0;
+  const shipping = order.shipping || 0;
+  const total = order.totalAmount;
 
   const handlePrint = () => {
     window.print();
@@ -57,9 +59,9 @@ export default function Invoice({ order, onClose }) {
         <div className="invoice-print-area">
           
           {/* Angled Paid Stamp */}
-          {order.status === 'approved' && (
+          {(order.status === 'approved' || order.status === 'paid') && (
             <div className="invoice-paid-stamp">
-              PAID VIA M-PESA
+              {order.mpesaTransactionCode ? 'PAID VIA M-PESA' : 'PAID'}
             </div>
           )}
 
@@ -81,7 +83,7 @@ export default function Invoice({ order, onClose }) {
                 />
               )}
               <span className="invoice-brand-title">
-                {hasArt && hasWearable 
+                {order.brand === 'both' || (hasArt && hasWearable)
                   ? 'Oture • Lutoni' 
                   : hasWearable 
                     ? 'Lutoni Wear' 
@@ -112,9 +114,9 @@ export default function Invoice({ order, onClose }) {
               <h4 className="invoice-bill-col-title">Billed To</h4>
               <div className="invoice-bill-address">
                 <strong>{order.customerName}</strong><br />
-                Email: {order.customerEmail}<br />
-                Phone: {order.customerPhone}<br />
-                Address: {order.deliveryAddress}
+                {order.customerEmail && <>Email: {order.customerEmail}<br /></>}
+                {order.customerPhone && <>Phone: {order.customerPhone}<br /></>}
+                {order.deliveryAddress && <>Address: {order.deliveryAddress}</>}
               </div>
             </div>
           </div>
@@ -137,7 +139,7 @@ export default function Invoice({ order, onClose }) {
                   <td>
                     <strong>{item.name}</strong>
                   </td>
-                  <td style={{ textTransform: 'capitalize' }}>{item.type}</td>
+                  <td style={{ textTransform: 'capitalize' }}>{item.type || 'item'}</td>
                   <td>{item.size || '—'}</td>
                   <td style={{ textAlign: 'center' }}>{item.quantity}</td>
                   <td style={{ textAlign: 'right' }}>{formatPrice(item.price)}</td>
@@ -154,22 +156,37 @@ export default function Invoice({ order, onClose }) {
             <div className="invoice-summary-box">
               <div className="invoice-summary-row">
                 <span>Subtotal</span>
-                <span>{formatPrice(total)}</span>
+                <span>{formatPrice(subtotal)}</span>
               </div>
-              <div className="invoice-summary-row">
-                <span>M-Pesa Verification fee</span>
-                <span>{formatPrice(0)}</span>
-              </div>
+              {tax > 0 && (
+                <div className="invoice-summary-row">
+                  <span>Tax / VAT</span>
+                  <span>{formatPrice(tax)}</span>
+                </div>
+              )}
+              {shipping > 0 && (
+                <div className="invoice-summary-row">
+                  <span>Shipping</span>
+                  <span>{formatPrice(shipping)}</span>
+                </div>
+              )}
               <div className="invoice-summary-row grand-total">
                 <span>Grand Total</span>
                 <span>{formatPrice(total)}</span>
               </div>
               
               <div style={{ marginTop: '20px', fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'right' }}>
-                Payment Method: Mobile Money (M-Pesa)<br />
-                Transaction Ref: <strong>{order.mpesaTransactionCode}</strong>
+                Payment Method: {order.paymentMethod || 'Mobile Money (M-Pesa)'}<br />
+                Transaction Ref: <strong>{order.mpesaTransactionCode || 'OFFLINE'}</strong>
               </div>
             </div>
+          </div>
+
+          {/* Footer Section */}
+          <div className="invoice-footer-section">
+            <div className="invoice-footer-line">Thank you for supporting independent art & design.</div>
+            <div className="invoice-footer-sub">For inquiries, email contact@artbyoture.com | Call +254 723 968 164</div>
+            <div className="invoice-footer-disclaimer">This invoice is generated electronically and serves as official proof of transaction.</div>
           </div>
 
         </div>
