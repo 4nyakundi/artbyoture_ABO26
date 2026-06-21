@@ -22,11 +22,6 @@ export default function Videos() {
       src: '/assets/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4'
     },
     {
-      label: 'Cubism Studio Picasso Study',
-      word: 'CUBISM',
-      src: '/assets/Pulled_20some_20inspiration_20from_20Picasso_20for_20this_20cubism_20piece._20Coming_20soon_20_F0_9F_98_89_F0_9F_8E_A8.mp4'
-    },
-    {
       label: 'Fine Strokes & Texture Work',
       word: 'SHATTER',
       src: '/assets/0873F2E2-D268-49B5-B1B9-126646E0D83D.MP4'
@@ -70,16 +65,6 @@ export default function Videos() {
       label: 'Textured Surface Experiment',
       word: 'TEXTURE',
       src: '/assets/v09044g40000ctebos7og65inlsgqq9g.MP4'
-    },
-    {
-      label: 'High Contrast Geometry',
-      word: 'CONTRAST',
-      src: '/assets/v09044g40000cuu1otfog65i98hqb0cg.MP4'
-    },
-    {
-      label: 'Acrylic Paint Blend',
-      word: 'PAINT',
-      src: '/assets/v09044g40000cuusfrnog65ifp7d6r3g.MP4'
     }
   ];
 
