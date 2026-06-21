@@ -33,8 +33,53 @@ export default function Videos() {
     },
     {
       label: 'Fluid Acrylic Flow & Movement',
-      word: 'ORGANIC',
+      word: 'FLOW',
       src: '/assets/3878A53A-81AA-493F-942B-3D6244C95961.MP4'
+    },
+    {
+      label: 'Brushing Canvas Layers',
+      word: 'CANVAS',
+      src: '/assets/52C92DE6-F596-4C48-BAE8-E76FF80F0685.MP4'
+    },
+    {
+      label: 'Abstract Shapes Composition',
+      word: 'SHAPES',
+      src: '/assets/DDE13BA2-6844-413B-AFC1-C223020A17B6.MP4'
+    },
+    {
+      label: 'Dynamic Art Strokes',
+      word: 'STROKES',
+      src: '/assets/E45356A6-F477-4FF4-AA1C-2E034C14EF62.MP4'
+    },
+    {
+      label: 'Zebra Pattern Layering',
+      word: 'ZEBRA',
+      src: '/assets/v09044g40000ckr0be7og65r0npr5p7g.MP4'
+    },
+    {
+      label: 'Lutoni Blossom Wear Print',
+      word: 'BLOSSOM',
+      src: '/assets/v09044g40000cqesjjnog65o0ifiialg.MP4'
+    },
+    {
+      label: 'Shadow Depth Contrast',
+      word: 'SHADOW',
+      src: '/assets/v09044g40000cr7f7jfog65kb4ko49h0.MP4'
+    },
+    {
+      label: 'Textured Surface Experiment',
+      word: 'TEXTURE',
+      src: '/assets/v09044g40000ctebos7og65inlsgqq9g.MP4'
+    },
+    {
+      label: 'High Contrast Geometry',
+      word: 'CONTRAST',
+      src: '/assets/v09044g40000cuu1otfog65i98hqb0cg.MP4'
+    },
+    {
+      label: 'Acrylic Paint Blend',
+      word: 'PAINT',
+      src: '/assets/v09044g40000cuusfrnog65ifp7d6r3g.MP4'
     }
   ];
 
@@ -70,10 +115,10 @@ export default function Videos() {
       const text = panel.querySelector('.panel-giant-word');
       
       gsap.fromTo(text, 
-        { y: -30, skewX: 5 },
+        { y: -35, skewX: 6 },
         {
-          y: 30,
-          skewX: -5,
+          y: 35,
+          skewX: -6,
           ease: 'none',
           scrollTrigger: {
             trigger: panel,
