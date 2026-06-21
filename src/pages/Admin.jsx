@@ -546,7 +546,28 @@ export default function Admin() {
         shipping: 0
       });
     } catch (e) {
-      alert('Failed to save invoice.');
+      console.warn("Firestore sync failed, saving locally:", e);
+      try {
+        const invoicesList = JSON.parse(localStorage.getItem('mock_invoices')) || [];
+        invoicesList.unshift(payload);
+        localStorage.setItem('mock_invoices', JSON.stringify(invoicesList));
+        alert('Invoice saved locally on this browser (Cloud database sync failed).');
+        fetchDbData();
+        setNewInvoice({
+          id: generateRandomInvoiceNumber(newInvoice.brand),
+          brand: newInvoice.brand,
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          deliveryAddress: '',
+          status: 'paid',
+          items: [{ name: '', type: 'art', size: '', price: '', quantity: 1 }],
+          taxPercent: 0,
+          shipping: 0
+        });
+      } catch (err) {
+        alert('Failed to save invoice completely.');
+      }
     }
   };
 
@@ -595,7 +616,30 @@ export default function Admin() {
         shipping: 0
       });
     } catch (e) {
-      alert('Failed to save and preview invoice.');
+      console.warn("Firestore sync failed, opening preview and saving locally:", e);
+      try {
+        const invoicesList = JSON.parse(localStorage.getItem('mock_invoices')) || [];
+        invoicesList.unshift(payload);
+        localStorage.setItem('mock_invoices', JSON.stringify(invoicesList));
+        fetchDbData();
+        setSelectedSavedInvoice(payload);
+        alert('Invoice opened for print preview and saved locally (Cloud sync failed).');
+        setNewInvoice({
+          id: generateRandomInvoiceNumber(newInvoice.brand),
+          brand: newInvoice.brand,
+          customerName: '',
+          customerEmail: '',
+          customerPhone: '',
+          deliveryAddress: '',
+          status: 'paid',
+          items: [{ name: '', type: 'art', size: '', price: '', quantity: 1 }],
+          taxPercent: 0,
+          shipping: 0
+        });
+      } catch (err) {
+        alert('Failed to save invoice locally, but opening preview.');
+        setSelectedSavedInvoice(payload);
+      }
     }
   };
 
