@@ -269,18 +269,39 @@ export default function Admin() {
         { y: 50, opacity: 0, scale: 0.95 },
         { y: 0, opacity: 1, scale: 1, duration: 1, ease: 'power3.out' }
       );
-    } else if (isLoggedIn && dashboardRef.current) {
+    }
+  }, [isLoggedIn]);
+
+  // GSAP Entry Animation for Dashboard Header and Tabs (Run once on login)
+  useEffect(() => {
+    if (isLoggedIn && dashboardRef.current) {
       const ctx = gsap.context(() => {
-        gsap.from('.admin-title-wrap', { opacity: 0, x: -30, duration: 0.8, ease: 'power2.out' });
-        gsap.from('.admin-logout-btn', { opacity: 0, x: 30, duration: 0.8, ease: 'power2.out' }, '-=0.8');
-        gsap.from('.admin-tabs-nav button', { opacity: 0, y: 15, stagger: 0.08, duration: 0.6, ease: 'power2.out' }, '-=0.4');
-        gsap.from('.metric-card', { opacity: 0, y: 30, stagger: 0.1, duration: 0.8, ease: 'back.out(1.2)' });
-        gsap.from('.analytics-card', { opacity: 0, y: 40, stagger: 0.15, duration: 1, ease: 'power3.out' }, '-=0.4');
+        const tl = gsap.timeline();
+        tl.from('.admin-title-wrap', { opacity: 0, x: -30, duration: 0.8, ease: 'power2.out' });
+        tl.from('.admin-logout-btn', { opacity: 0, x: 30, duration: 0.8, ease: 'power2.out' }, '-=0.8');
+        tl.from('.admin-tabs-nav button', { opacity: 0, y: 15, stagger: 0.08, duration: 0.6, ease: 'power2.out' }, '-=0.4');
       }, dashboardRef.current);
 
       return () => ctx.revert();
     }
-  }, [isLoggedIn, loading]);
+  }, [isLoggedIn]);
+
+  // GSAP Tab Content Animations (Overview Tab Cards - Run when loading completes or overview tab is selected)
+  useEffect(() => {
+    if (isLoggedIn && !loading && activeTab === 'overview' && dashboardRef.current) {
+      const ctx = gsap.context(() => {
+        const tl = gsap.timeline();
+        if (document.querySelector('.metric-card')) {
+          tl.from('.metric-card', { opacity: 0, y: 30, stagger: 0.1, duration: 0.8, ease: 'back.out(1.2)' });
+        }
+        if (document.querySelector('.analytics-card')) {
+          tl.from('.analytics-card', { opacity: 0, y: 40, stagger: 0.15, duration: 1, ease: 'power3.out' }, '-=0.4');
+        }
+      }, dashboardRef.current);
+
+      return () => ctx.revert();
+    }
+  }, [isLoggedIn, loading, activeTab]);
 
   const handleLogin = (e) => {
     e.preventDefault();
