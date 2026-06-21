@@ -532,7 +532,7 @@ export default function Home() {
           
           <div style={{ marginTop: '60px', borderTop: '1px solid rgba(255,255,255,0.1)', paddingTop: '30px', display: 'flex', justifyContent: 'space-between', fontSize: '0.85rem', opacity: 0.6 }}>
             <span>© 2026 Art By Oture & Lutoni. All Rights Reserved.</span>
-            <span>Made with Antigravity AI</span>
+            <span>developed and created by Nyakundi N BY <a href="https://dpinc.top" target="_blank" rel="noopener noreferrer" style={{ textDecoration: 'underline' }}>DataPort (dpinc.top)</a></span>
           </div>
         </div>
       </footer>
