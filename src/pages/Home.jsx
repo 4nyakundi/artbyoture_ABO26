@@ -12,6 +12,7 @@ export default function Home() {
   const trackRef = useRef(null);
   const infoHeaderRef = useRef(null);
   const featureHeaderRef = useRef(null);
+  const artistHeaderRef = useRef(null);
 
   // Core showcase items (Only single post paintings from Instagram)
   const showcaseItems = [
@@ -226,6 +227,24 @@ export default function Home() {
       );
     }
 
+    if (artistHeaderRef.current) {
+      gsap.fromTo(artistHeaderRef.current, 
+        { opacity: 0, scale: 0.85, rotateY: 15 },
+        { 
+          opacity: 1, 
+          scale: 1, 
+          rotateY: 0,
+          duration: 1.5, 
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: artistHeaderRef.current,
+            start: 'top 85%',
+            toggleActions: 'play none none reverse'
+          }
+        }
+      );
+    }
+
     // Stagger slide glass panels
     gsap.fromTo('.glass-feature-card',
       { y: 80, opacity: 0 },
@@ -347,6 +366,75 @@ export default function Home() {
               <p className="info-desc">
                 In addition, Lutoni Wearables offers high-concept garments, street garments, and accessories designed with structural patterns directly inspired by the art.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* About the Artist Section */}
+      <section className="artist-profile-section">
+        <div className="container">
+          <div className="artist-layout-grid">
+            {/* Visual column: Glassmorphic frame with hover play video */}
+            <div 
+              className="artist-visual-frame glass-panel interactive video-card-interactive"
+              onMouseEnter={() => {
+                const video = document.querySelector('.artist-profile-video');
+                if (video) video.play().catch(() => {});
+              }}
+              onMouseLeave={() => {
+                const video = document.querySelector('.artist-profile-video');
+                if (video) video.pause();
+              }}
+            >
+              <img 
+                src="/assets/IMG_0959_Original.JPG" 
+                className="artist-profile-photo" 
+                alt="Artist Calvin Oture Portrait" 
+              />
+              <video 
+                src="/assets/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4" 
+                className="artist-profile-video" 
+                loop 
+                muted 
+                playsInline 
+              />
+              <span className="artist-visual-tag">Focused on the path</span>
+            </div>
+
+            {/* Info column: Bold typography & story */}
+            <div className="artist-info-frame" ref={artistHeaderRef}>
+              <h2 className="artist-heading-reveal">
+                <span className="artist-bold-name">Calvin Oture</span>
+                <span className="artist-bold-title">The Painter & Creator</span>
+              </h2>
+              
+              <p className="artist-story-p">
+                Calvin Oture is a contemporary visual artist and garment designer based in Nairobi, Kenya. Merging organic wavy line designs with heavy textures, his work translates raw canvas emotion directly into streetwear garments.
+              </p>
+              
+              <p className="artist-story-p italic">
+                "Everything you can imagine is real. The flows of the canvas weave directly into the garments."
+              </p>
+              
+              <div className="artist-actions">
+                <a 
+                  href="https://www.instagram.com/artbyoture/?hl=en" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="artist-social-btn glass-panel interactive"
+                >
+                  Instagram @artbyoture
+                </a>
+                <a 
+                  href="https://www.instagram.com/lutoni.ke/?hl=en" 
+                  target="_blank" 
+                  rel="noopener noreferrer" 
+                  className="artist-social-btn glass-panel red-accent interactive"
+                >
+                  Instagram @lutoni.ke
+                </a>
+              </div>
             </div>
           </div>
         </div>
