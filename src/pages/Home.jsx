@@ -376,7 +376,10 @@ export default function Home() {
         <div className="container">
           <div className="artist-layout-grid">
             {/* Visual column: Glassmorphic frame with hover play video */}
-            <div 
+            <a 
+              href="https://www.instagram.com/p/Bj40XDlg4ol/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
               className="artist-visual-frame glass-panel interactive video-card-interactive"
               onMouseEnter={() => {
                 const video = document.querySelector('.artist-profile-video');
@@ -400,7 +403,7 @@ export default function Home() {
                 playsInline 
               />
               <span className="artist-visual-tag">Focused on the path</span>
-            </div>
+            </a>
 
             {/* Info column: Bold typography & story */}
             <div className="artist-info-frame" ref={artistHeaderRef}>
