@@ -4,6 +4,9 @@
   min-height: 100vh;
   position: relative;
   overflow: hidden;
+  width: 100%;
+  padding-left: 4%;
+  padding-right: 4%;
 }
 
 /* Background Ambient Glows for Admin Login & Dashboard */
