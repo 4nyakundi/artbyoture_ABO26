@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, Lock } from 'lucide-react';
 import './Navbar.css';
 
-export default function Navbar({ cartCount, onCartToggle }) {
+export default function Navbar({ cartCount, onCartToggle, onLoginToggle }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
