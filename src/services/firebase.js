@@ -268,6 +268,16 @@ if (config && config.apiKey && config.apiKey !== 'YOUR_API_KEY') {
   console.log("No Firebase config detected. Running in local MOCK database mode.");
 }
 
+// Helper to race Firestore getDocs against a timeout to prevent hanging UI on misconfigured Firebase instances
+const getDocsWithTimeout = async (collectionRef, timeoutMs = 4000) => {
+  return Promise.race([
+    getDocs(collectionRef),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Firestore connection timeout")), timeoutMs)
+    )
+  ]);
+};
+
 // LocalStorage helpers for Mock Mode
 const getLocalData = (key, initial) => {
   const data = localStorage.getItem(key);
@@ -306,7 +316,7 @@ export const database = {
       return getLocalData('mock_products', initialMockProducts);
     } else {
       try {
-        const querySnapshot = await getDocs(collection(db, 'products'));
+        const querySnapshot = await getDocsWithTimeout(collection(db, 'products'));
         const productsList = [];
         querySnapshot.forEach((doc) => {
           productsList.push({ id: doc.id, ...doc.data() });
@@ -378,7 +388,7 @@ export const database = {
       return getLocalData('mock_orders', initialMockOrders).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
     } else {
       try {
-        const querySnapshot = await getDocs(collection(db, 'orders'));
+        const querySnapshot = await getDocsWithTimeout(collection(db, 'orders'));
         const ordersList = [];
         querySnapshot.forEach((doc) => {
           ordersList.push({ id: doc.id, ...doc.data() });
@@ -430,7 +440,7 @@ export const database = {
       return getLocalData('mock_invoices', []);
     } else {
       try {
-        const querySnapshot = await getDocs(collection(db, 'invoices'));
+        const querySnapshot = await getDocsWithTimeout(collection(db, 'invoices'));
         const invoicesList = [];
         querySnapshot.forEach((doc) => {
           invoicesList.push({ id: doc.id, ...doc.data() });
@@ -479,7 +489,7 @@ export const database = {
       ]);
     } else {
       try {
-        const querySnapshot = await getDocs(collection(db, 'media_items'));
+        const querySnapshot = await getDocsWithTimeout(collection(db, 'media_items'));
         const mediaList = [];
         querySnapshot.forEach((doc) => {
           mediaList.push({ id: doc.id, ...doc.data() });
