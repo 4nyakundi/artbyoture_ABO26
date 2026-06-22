@@ -1,3 +1,18 @@
-node_module/
-dish/
+node_modules
+/dist
+.firebase
 .env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+NAME_OF_LARGE_FOLDER/
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# System Files
+.DS_Store
+Thumbs.db

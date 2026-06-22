@@ -243,37 +243,59 @@
 
 /* Print Specific Rules */
 @media print {
-  body * {
-    visibility: hidden;
-  }
-  .invoice-modal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: auto;
-    background-color: transparent;
-    backdrop-filter: none;
-    padding: 0;
-  }
-  .invoice-container {
-    box-shadow: none;
-    padding: 0;
-    width: 100%;
-    max-height: none;
-    overflow-y: visible;
-  }
+  /* Hide the rest of the application layout elements */
+  #root > :not(main),
+  main > :not(.admin-page-container),
+  .admin-page-container > :not(.invoice-modal-overlay),
   .invoice-actions-bar {
     display: none !important;
   }
-  .invoice-print-area, .invoice-print-area * {
-    visibility: visible;
+
+  /* Reset layout constraints on body and html to avoid clipping */
+  html, body {
+    background: #fff !important;
+    color: #000 !important;
+    overflow: visible !important;
+    height: auto !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
   }
+
+  /* Reset positioning and visual styles of overlay */
+  .invoice-modal-overlay {
+    position: relative !important;
+    display: block !important;
+    z-index: auto !important;
+    background: none !important;
+    backdrop-filter: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Force container to match page width, remove scrollbars and box shadow */
+  .invoice-container {
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    overflow: visible !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    background: transparent !important;
+  }
+
   .invoice-print-area {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
+    visibility: visible !important;
+    display: block !important;
+    width: 100% !important;
+    position: relative !important;
+    left: auto !important;
+    top: auto !important;
   }
 }
 

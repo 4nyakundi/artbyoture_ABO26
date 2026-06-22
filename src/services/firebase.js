@@ -445,7 +445,17 @@ export const database = {
         querySnapshot.forEach((doc) => {
           invoicesList.push({ id: doc.id, ...doc.data() });
         });
-        return invoicesList.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        // Merge locally saved/mock invoices (e.g., if writing to Firestore failed or saved offline earlier)
+        const localInvoices = getLocalData('mock_invoices', []);
+        const mergedInvoices = [...invoicesList];
+        localInvoices.forEach(localInv => {
+          if (!mergedInvoices.some(inv => inv.id === localInv.id)) {
+            mergedInvoices.push(localInv);
+          }
+        });
+        
+        return mergedInvoices.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
       } catch (e) {
         console.error("Firestore read error, falling back to local mock invoices:", e);
         return getLocalData('mock_invoices', []);
@@ -475,7 +485,14 @@ export const database = {
       setLocalData('mock_invoices', filtered);
       return true;
     } else {
-      await deleteDoc(doc(db, 'invoices', id));
+      try {
+        await deleteDoc(doc(db, 'invoices', id));
+      } catch (e) {
+        console.error("Failed to delete from Firestore:", e);
+      }
+      const invoices = getLocalData('mock_invoices', []);
+      const filtered = invoices.filter(inv => inv.id !== id);
+      setLocalData('mock_invoices', filtered);
       return true;
     }
   },
