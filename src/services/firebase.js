@@ -278,6 +278,33 @@ const getDocsWithTimeout = async (collectionRef, timeoutMs = 4000) => {
   ]);
 };
 
+const setDocWithTimeout = async (docRef, data, timeoutMs = 4000) => {
+  return Promise.race([
+    setDoc(docRef, data),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Firestore write timeout")), timeoutMs)
+    )
+  ]);
+};
+
+const updateDocWithTimeout = async (docRef, data, timeoutMs = 4000) => {
+  return Promise.race([
+    updateDoc(docRef, data),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Firestore update timeout")), timeoutMs)
+    )
+  ]);
+};
+
+const deleteDocWithTimeout = async (docRef, timeoutMs = 4000) => {
+  return Promise.race([
+    deleteDoc(docRef),
+    new Promise((_, reject) => 
+      setTimeout(() => reject(new Error("Firestore delete timeout")), timeoutMs)
+    )
+  ]);
+};
+
 // LocalStorage helpers for Mock Mode
 const getLocalData = (key, initial) => {
   const data = localStorage.getItem(key);
@@ -325,7 +352,7 @@ export const database = {
         if (productsList.length === 0) {
           // If Firestore is empty, seed it with initial data
           for (const prod of initialMockProducts) {
-            await setDoc(doc(db, 'products', prod.id), prod);
+            await setDocWithTimeout(doc(db, 'products', prod.id), prod);
             productsList.push(prod);
           }
         }
@@ -347,7 +374,7 @@ export const database = {
       setLocalData('mock_products', prods);
       return newProduct;
     } else {
-      await setDoc(doc(db, 'products', id), newProduct);
+      await setDocWithTimeout(doc(db, 'products', id), newProduct);
       return newProduct;
     }
   },
@@ -364,7 +391,7 @@ export const database = {
       throw new Error("Product not found");
     } else {
       const docRef = doc(db, 'products', id);
-      await updateDoc(docRef, updatedFields);
+      await updateDocWithTimeout(docRef, updatedFields);
       const updatedSnap = await getDoc(docRef);
       return { id: updatedSnap.id, ...updatedSnap.data() };
     }
@@ -377,7 +404,7 @@ export const database = {
       setLocalData('mock_products', filtered);
       return true;
     } else {
-      await deleteDoc(doc(db, 'products', id));
+      await deleteDocWithTimeout(doc(db, 'products', id));
       return true;
     }
   },
@@ -411,7 +438,7 @@ export const database = {
       setLocalData('mock_orders', orders);
       return newOrder;
     } else {
-      await setDoc(doc(db, 'orders', id), newOrder);
+      await setDocWithTimeout(doc(db, 'orders', id), newOrder);
       return newOrder;
     }
   },
@@ -428,7 +455,7 @@ export const database = {
       throw new Error("Order not found");
     } else {
       const docRef = doc(db, 'orders', id);
-      await updateDoc(docRef, { status });
+      await updateDocWithTimeout(docRef, { status });
       const updatedSnap = await getDoc(docRef);
       return { id: updatedSnap.id, ...updatedSnap.data() };
     }
@@ -473,7 +500,7 @@ export const database = {
       setLocalData('mock_invoices', invoices);
       return newInvoice;
     } else {
-      await setDoc(doc(db, 'invoices', id), newInvoice);
+      await setDocWithTimeout(doc(db, 'invoices', id), newInvoice);
       return newInvoice;
     }
   },
@@ -486,7 +513,7 @@ export const database = {
       return true;
     } else {
       try {
-        await deleteDoc(doc(db, 'invoices', id));
+        await deleteDocWithTimeout(doc(db, 'invoices', id));
       } catch (e) {
         console.error("Failed to delete from Firestore:", e);
       }
@@ -529,7 +556,7 @@ export const database = {
       setLocalData('mock_media_items', media);
       return newMedia;
     } else {
-      await setDoc(doc(db, 'media_items', id), newMedia);
+      await setDocWithTimeout(doc(db, 'media_items', id), newMedia);
       return newMedia;
     }
   },
@@ -541,7 +568,7 @@ export const database = {
       setLocalData('mock_media_items', filtered);
       return true;
     } else {
-      await deleteDoc(doc(db, 'media_items', id));
+      await deleteDocWithTimeout(doc(db, 'media_items', id));
       if (storagePath) {
         try {
           const storageRef = ref(storage, storagePath);

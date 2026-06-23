@@ -1522,7 +1522,7 @@ export default function Admin() {
           {activeTab === 'invoices' && (
             <div className="invoice-creator-layout">
               {/* Form Side */}
-              <div className="product-form-card glass-panel" style={{ padding: '30px' }}>
+              <div className="product-form-card glass-panel" style={{ padding: '30px', position: 'relative', top: 'auto', height: 'auto' }}>
                 <h3 className="form-title">Invoice Creator Form</h3>
                 
                 <form onSubmit={handleSaveInvoice} style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
@@ -1837,7 +1837,7 @@ export default function Admin() {
           {/* Tab 5: Media Manager */}
           {activeTab === 'media' && (
             <div className="media-manager-layout">
-              <div className="product-form-card glass-panel" style={{ padding: '30px' }}>
+              <div className="product-form-card glass-panel" style={{ padding: '30px', position: 'relative', top: 'auto', height: 'auto' }}>
                 <h3 className="form-title">Media Library Registry</h3>
                 <p style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginBottom: '25px', lineHeight: '1.5' }}>
                   Upload picture and video files directly. In online mode, files will be securely synced with Firebase Storage and return public links. Copy these links to register new products or embed visuals.
