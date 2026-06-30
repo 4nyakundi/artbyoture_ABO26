@@ -419,8 +419,7 @@ export default function Admin() {
   const handleExportCSV = () => {
     if (orders.length === 0) return;
     
-    let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Order ID,Customer Name,Email,Phone,M-Pesa Ref,Items,Total Amount (KES),Status,Created Date\n";
+    let csvContent = "Order ID,Customer Name,Email,Phone,M-Pesa Ref,Items,Total Amount (KES),Status,Created Date\n";
     
     orders.forEach(order => {
       const itemsListStr = order.items.map(i => `${i.name} (${i.quantity}x${i.size ? ' size '+i.size : ''})`).join('; ');
@@ -438,13 +437,15 @@ export default function Admin() {
       csvContent += row + "\n";
     });
 
-    const encodedUri = encodeURI(csvContent);
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.setAttribute("href", encodedUri);
+    link.setAttribute("href", url);
     link.setAttribute("download", `artbyoture_bookkeeping_${new Date().toISOString().split('T')[0]}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   };
 
   // Generate random invoice number

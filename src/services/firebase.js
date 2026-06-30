@@ -356,7 +356,19 @@ export const database = {
             productsList.push(prod);
           }
         }
-        return productsList;
+        
+        // Merge locally saved/updated mock products
+        const localProds = getLocalData('mock_products', initialMockProducts);
+        const mergedProds = [...productsList];
+        localProds.forEach(localProd => {
+          const index = mergedProds.findIndex(p => p.id === localProd.id);
+          if (index === -1) {
+            mergedProds.push(localProd);
+          } else {
+            mergedProds[index] = { ...mergedProds[index], ...localProd };
+          }
+        });
+        return mergedProds;
       } catch (e) {
         console.error("Firestore read error, falling back to local mock products:", e);
         return getLocalData('mock_products', initialMockProducts);
@@ -368,43 +380,69 @@ export const database = {
     const id = product.id || 'prod-' + Math.random().toString(36).substr(2, 9);
     const newProduct = { ...product, id, createdAt: new Date().toISOString() };
     
-    if (isMockMode) {
-      const prods = getLocalData('mock_products', initialMockProducts);
+    // Write locally first
+    const prods = getLocalData('mock_products', initialMockProducts);
+    const index = prods.findIndex(p => p.id === id);
+    if (index === -1) {
       prods.unshift(newProduct);
-      setLocalData('mock_products', prods);
+    } else {
+      prods[index] = newProduct;
+    }
+    setLocalData('mock_products', prods);
+    
+    if (isMockMode) {
       return newProduct;
     } else {
-      await setDocWithTimeout(doc(db, 'products', id), newProduct);
+      try {
+        await setDocWithTimeout(doc(db, 'products', id), newProduct);
+      } catch (e) {
+        console.warn("Firestore product add failed, utilizing local fallback:", e);
+      }
       return newProduct;
     }
   },
 
   updateProduct: async (id, updatedFields) => {
+    // Write locally first
+    const prods = getLocalData('mock_products', initialMockProducts);
+    const index = prods.findIndex(p => p.id === id);
+    let localUpdated = null;
+    if (index > -1) {
+      prods[index] = { ...prods[index], ...updatedFields };
+      localUpdated = prods[index];
+      setLocalData('mock_products', prods);
+    }
+    
     if (isMockMode) {
-      const prods = getLocalData('mock_products', initialMockProducts);
-      const index = prods.findIndex(p => p.id === id);
-      if (index > -1) {
-        prods[index] = { ...prods[index], ...updatedFields };
-        setLocalData('mock_products', prods);
-        return prods[index];
-      }
-      throw new Error("Product not found");
+      if (!localUpdated) throw new Error("Product not found");
+      return localUpdated;
     } else {
-      const docRef = doc(db, 'products', id);
-      await updateDocWithTimeout(docRef, updatedFields);
-      const updatedSnap = await getDoc(docRef);
-      return { id: updatedSnap.id, ...updatedSnap.data() };
+      try {
+        const docRef = doc(db, 'products', id);
+        await updateDocWithTimeout(docRef, updatedFields);
+        const updatedSnap = await getDoc(docRef);
+        return { id: updatedSnap.id, ...updatedSnap.data() };
+      } catch (e) {
+        console.warn("Firestore product update failed, utilizing local fallback:", e);
+        return localUpdated || { id, ...updatedFields };
+      }
     }
   },
 
   deleteProduct: async (id) => {
+    // Delete locally first
+    const prods = getLocalData('mock_products', initialMockProducts);
+    const filtered = prods.filter(p => p.id !== id);
+    setLocalData('mock_products', filtered);
+    
     if (isMockMode) {
-      const prods = getLocalData('mock_products', initialMockProducts);
-      const filtered = prods.filter(p => p.id !== id);
-      setLocalData('mock_products', filtered);
       return true;
     } else {
-      await deleteDocWithTimeout(doc(db, 'products', id));
+      try {
+        await deleteDocWithTimeout(doc(db, 'products', id));
+      } catch (e) {
+        console.warn("Firestore product delete failed, utilizing local fallback:", e);
+      }
       return true;
     }
   },
@@ -420,7 +458,19 @@ export const database = {
         querySnapshot.forEach((doc) => {
           ordersList.push({ id: doc.id, ...doc.data() });
         });
-        return ordersList.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        // Merge locally updated mock orders
+        const localOrders = getLocalData('mock_orders', initialMockOrders);
+        const mergedOrders = [...ordersList];
+        localOrders.forEach(localOrd => {
+          const idx = mergedOrders.findIndex(o => o.id === localOrd.id);
+          if (idx === -1) {
+            mergedOrders.push(localOrd);
+          } else {
+            mergedOrders[idx] = { ...mergedOrders[idx], ...localOrd };
+          }
+        });
+        return mergedOrders.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
       } catch (e) {
         console.error("Firestore read error, falling back to local mock orders:", e);
         return getLocalData('mock_orders', initialMockOrders).sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
@@ -432,32 +482,47 @@ export const database = {
     const id = 'ord-' + Math.random().toString(36).substr(2, 9).toUpperCase();
     const newOrder = { ...order, id };
     
+    // Save locally first
+    const orders = getLocalData('mock_orders', initialMockOrders);
+    orders.unshift(newOrder);
+    setLocalData('mock_orders', orders);
+    
     if (isMockMode) {
-      const orders = getLocalData('mock_orders', initialMockOrders);
-      orders.unshift(newOrder);
-      setLocalData('mock_orders', orders);
       return newOrder;
     } else {
-      await setDocWithTimeout(doc(db, 'orders', id), newOrder);
+      try {
+        await setDocWithTimeout(doc(db, 'orders', id), newOrder);
+      } catch (e) {
+        console.warn("Firestore order write failed, utilizing local fallback:", e);
+      }
       return newOrder;
     }
   },
 
   updateOrderStatus: async (id, status) => {
+    // Update locally first
+    const orders = getLocalData('mock_orders', initialMockOrders);
+    const index = orders.findIndex(o => o.id === id);
+    let localUpdated = null;
+    if (index > -1) {
+      orders[index].status = status;
+      localUpdated = orders[index];
+      setLocalData('mock_orders', orders);
+    }
+    
     if (isMockMode) {
-      const orders = getLocalData('mock_orders', initialMockOrders);
-      const index = orders.findIndex(o => o.id === id);
-      if (index > -1) {
-        orders[index].status = status;
-        setLocalData('mock_orders', orders);
-        return orders[index];
-      }
-      throw new Error("Order not found");
+      if (!localUpdated) throw new Error("Order not found");
+      return localUpdated;
     } else {
-      const docRef = doc(db, 'orders', id);
-      await updateDocWithTimeout(docRef, { status });
-      const updatedSnap = await getDoc(docRef);
-      return { id: updatedSnap.id, ...updatedSnap.data() };
+      try {
+        const docRef = doc(db, 'orders', id);
+        await updateDocWithTimeout(docRef, { status });
+        const updatedSnap = await getDoc(docRef);
+        return { id: updatedSnap.id, ...updatedSnap.data() };
+      } catch (e) {
+        console.warn("Firestore order update failed, utilizing local fallback:", e);
+        return localUpdated || { id, status };
+      }
     }
   },
 
@@ -526,11 +591,12 @@ export const database = {
 
   // Media Items CRUD
   getMediaItems: async () => {
+    const defaultMedia = [
+      { id: 'm-1', name: 'Zebra Lines Painting', url: '/assets/IMG_1333.jpg', type: 'image', size: '2.5 MB', createdAt: new Date().toISOString() },
+      { id: 'm-2', name: 'Process Video', url: '/videos/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4', type: 'video', size: '5.5 MB', createdAt: new Date().toISOString() }
+    ];
     if (isMockMode) {
-      return getLocalData('mock_media_items', [
-        { id: 'm-1', name: 'Zebra Lines Painting', url: '/assets/IMG_1333.jpg', type: 'image', size: '2.5 MB', createdAt: new Date().toISOString() },
-        { id: 'm-2', name: 'Process Video', url: '/videos/Progress_E2_80_A6_F0_9F_92_9A_20_23acrylicpainting_20_23explore.mp4', type: 'video', size: '5.5 MB', createdAt: new Date().toISOString() }
-      ]);
+      return getLocalData('mock_media_items', defaultMedia);
     } else {
       try {
         const querySnapshot = await getDocsWithTimeout(collection(db, 'media_items'));
@@ -538,10 +604,19 @@ export const database = {
         querySnapshot.forEach((doc) => {
           mediaList.push({ id: doc.id, ...doc.data() });
         });
-        return mediaList.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        // Merge local media items
+        const localMedia = getLocalData('mock_media_items', defaultMedia);
+        const mergedMedia = [...mediaList];
+        localMedia.forEach(lm => {
+          if (!mergedMedia.some(m => m.id === lm.id)) {
+            mergedMedia.push(lm);
+          }
+        });
+        return mergedMedia.sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
       } catch (e) {
         console.error("Firestore read error for media:", e);
-        return getLocalData('mock_media_items', []);
+        return getLocalData('mock_media_items', defaultMedia);
       }
     }
   },
@@ -550,25 +625,37 @@ export const database = {
     const id = 'media-' + Math.random().toString(36).substr(2, 9);
     const newMedia = { ...mediaItem, id, createdAt: new Date().toISOString() };
     
+    // Save locally first
+    const media = getLocalData('mock_media_items', []);
+    media.unshift(newMedia);
+    setLocalData('mock_media_items', media);
+    
     if (isMockMode) {
-      const media = getLocalData('mock_media_items', []);
-      media.unshift(newMedia);
-      setLocalData('mock_media_items', media);
       return newMedia;
     } else {
-      await setDocWithTimeout(doc(db, 'media_items', id), newMedia);
+      try {
+        await setDocWithTimeout(doc(db, 'media_items', id), newMedia);
+      } catch (e) {
+        console.warn("Firestore media write failed, utilizing local fallback:", e);
+      }
       return newMedia;
     }
   },
 
   deleteMediaItem: async (id, storagePath) => {
+    // Delete locally first
+    const media = getLocalData('mock_media_items', []);
+    const filtered = media.filter(m => m.id !== id);
+    setLocalData('mock_media_items', filtered);
+    
     if (isMockMode) {
-      const media = getLocalData('mock_media_items', []);
-      const filtered = media.filter(m => m.id !== id);
-      setLocalData('mock_media_items', filtered);
       return true;
     } else {
-      await deleteDocWithTimeout(doc(db, 'media_items', id));
+      try {
+        await deleteDocWithTimeout(doc(db, 'media_items', id));
+      } catch (e) {
+        console.warn("Firestore media delete failed, utilizing local fallback:", e);
+      }
       if (storagePath) {
         try {
           const storageRef = ref(storage, storagePath);
@@ -596,11 +683,21 @@ export const database = {
         }
       });
     } else {
-      const storagePath = pathName || `media/${Date.now()}_${file.name}`;
-      const storageRef = ref(storage, storagePath);
-      await uploadBytes(storageRef, file);
-      const downloadUrl = await getDownloadURL(storageRef);
-      return { downloadUrl, storagePath };
+      try {
+        const storagePath = pathName || `media/${Date.now()}_${file.name}`;
+        const storageRef = ref(storage, storagePath);
+        await uploadBytes(storageRef, file);
+        const downloadUrl = await getDownloadURL(storageRef);
+        return { downloadUrl, storagePath };
+      } catch (e) {
+        console.warn("Storage upload failed, falling back to local FileReader URL:", e);
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onloadend = () => resolve({ downloadUrl: reader.result, storagePath: null });
+          reader.onerror = reject;
+          reader.readAsDataURL(file);
+        });
+      }
     }
   }
 };
