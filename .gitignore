@@ -9,6 +9,7 @@ node_modules
 NAME_OF_LARGE_FOLDER/
 public/assets/Paintings/
 *.zip
+public/videos/Art Videos/
 
 # Logs
 npm-debug.log*
